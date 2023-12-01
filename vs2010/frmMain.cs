@@ -159,6 +159,10 @@ namespace ImageConverter
             {
                 cmbOutputFormat.Text = "TIFF";
             }
+            else if (value == "jpg")
+            {
+                cmbOutputFormat.Text = "jpg";
+            }
 
 
         }
@@ -202,7 +206,7 @@ namespace ImageConverter
 
         private void btnProcess_Click(object sender, EventArgs e)
         {
-            string strPrefix = "convert";
+            string strPrefix = "magick convert";//https://stackoverflow.com/questions/38825008/how-to-use-imagemagick-command-line-on-windows
             string strOutputPrefix = "";
             TextWriter tw;
 
@@ -236,7 +240,7 @@ namespace ImageConverter
 
             if (txtDensity.Text != "")
             {
-                strPrefix = strPrefix + " -density " + txtDensity.Text;
+                strPrefix = strPrefix + " -density " + txtDensity.Text+"x" + txtDensity.Text;
             }
             if (chkTrim.Checked == true)
             {
@@ -251,6 +255,8 @@ namespace ImageConverter
             {
                 strOutputPrefix = strOutputPrefix + " -sharpen 0x1.0";
             }
+
+            strOutputPrefix = strOutputPrefix + " -rotate " + ((r90.Checked) ? "90" : (rccw90.Checked) ? "-90" :"0");
 
             /* Create the batch file */
 
@@ -335,5 +341,45 @@ namespace ImageConverter
             }
         }
 
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void r0_CheckedChanged(object sender, EventArgs e)
+        {
+            rotate_deg(0);
+        }
+
+        private void r90_CheckedChanged(object sender, EventArgs e)
+        {
+            rotate_deg(90);
+        }
+
+        private void rccw90_CheckedChanged(object sender, EventArgs e)
+        {
+            rotate_deg(-90);
+        }
+
+        private void rotate_deg(int deg) {
+            if (r0.Checked)
+            {
+                r90.Checked = false;
+                rccw90.Checked = false;
+            }
+            else if (r90.Checked)
+            {
+                r0.Checked = false;
+                rccw90.Checked = false;
+            }
+            else if (rccw90.Checked)
+            {
+                r0.Checked = false;
+                r90.Checked = false;
+            }
+            else {
+                MessageBox.Show("ERROR, @ fucn rotate_deg");
+            }
+        }
     }
 }
